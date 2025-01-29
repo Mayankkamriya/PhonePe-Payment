@@ -9,9 +9,10 @@ const app = express();
 
 app.use(cors(
   {
-    origin: [process.env.VITE_FRONTEND_URL],
+    origin : '*',
+    // origin: [process.env.VITE_FRONTEND_URL],
     methods: ["POST", "GET"],
-    credentials:true
+    credentials: true
   }
 ));
 app.use(express.json());
