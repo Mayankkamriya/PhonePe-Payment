@@ -7,17 +7,26 @@ const crypto = require('crypto');
 
 const app = express();
 
-app.use(cors());
+app.use(cors(
+  {
+    origin: [process.env.VITE_FRONTEND_URL],
+    methods: ["POST", "GET"],
+    credentials:true
+  }
+));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}))
 
 app.get("/", (req, res)=>{
+  console.log('process.env.VITE_FRONTEND_URL in cors....',process.env.VITE_FRONTEND_URL)
     res.send("API is running")
 })
 
 let salt_key = process.env.SALT_KEY
 let merchant_id = process.env.MERCHANT_ID
-
+const frontend = process.env.VITE_FRONTEND_URL
+const backend = process.env.VITE_BACKEND_URL
+console.log('process.env.VITE_BACKEND_URL...process.env.VITE_FRONTEND_URL...',process.env.VITE_BACKEND_URL,process.env.VITE_FRONTEND_URL)
 app.post('/order', async(req,res)=>{
 try {
     let{
@@ -33,7 +42,7 @@ try {
       merchantTransactionId: transactionId,
       name: name,
       amount: amount * 100,
-      redirectUrl: `http://localhost:8000/status?id=${transactionId}`,
+      redirectUrl: `${backend}/status?id=${transactionId}`,
       redirectMode: "POST",
       mobileNumber: mobile,
       paymentInstrument: {
@@ -41,6 +50,7 @@ try {
       },
       };
 
+      console.log('Data1   :',data)
     const KeyIndex =1
 
     // Base64 encode the payload
@@ -68,6 +78,7 @@ const option = {
       request : payloadMain
   }
 }
+console.log('option 1   :',option)
 
 axios.request(option).then((response) => {
   res.json(response.data)
@@ -89,6 +100,7 @@ app.post('/status', async (req,res) =>{
 
     const keyIndex =1
 
+    console.log('merchantTransactionId  ....',merchantTransactionId)
     const string = `/pg/v1/status/${merchantId}/${merchantTransactionId}` +salt_key;
     const sha256 = crypto.createHash('sha256').update(string).digest('hex')
     const checksum = sha256+ '###' + keyIndex
@@ -120,11 +132,11 @@ await axios(options).then(response =>{
 
     // const url = `http://localhost:5173/success?transactionId=${paymentDetails.transactionId}&amount=${paymentDetails.amount}&status=${paymentDetails.status}&timestamp=${paymentDetails.timestamp}`;
     // return res.redirect(url);
-    const url = "http://localhost:5173/success"
+    const url = `${frontend}/success`
     return res.redirect(url)
 
   } else {
-    const url = "http://localhost:5173/failure"
+    const url = `${frontend}/failure`
     return res.redirect(url)
   }
 })
