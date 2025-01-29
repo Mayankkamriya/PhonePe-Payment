@@ -8,6 +8,9 @@ const PaymentGateway = () => {
     amount: "402",
   });
 
+  const backend = import.meta.env.VITE_BACKEND_URL
+  console.log('import.meta.env.VITE_BACKEND_URL...',import.meta.env.VITE_BACKEND_URL,)
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -28,7 +31,7 @@ const PaymentGateway = () => {
     console.log("Sending Data:", data);
 
   await axios
-    .post("http://localhost:8000/order",data)
+    .post(`${backend}/order`,data)
     .then((response)=>{
       console.log("API Response:", response.data);
 
