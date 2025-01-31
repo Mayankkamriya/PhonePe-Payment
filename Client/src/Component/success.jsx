@@ -29,12 +29,25 @@
 
 
 import React from 'react'
-
+import { Navigate, useNavigate } from 'react-router-dom'
 const success = () => {
+  const navigate = useNavigate()
   return (
-    <div className="flex items-center justify-center h-screen">
-       <h1 className="text-2xl font-bold text-green-500">Payment Successful!</h1>
-     </div>
+
+    <div className="flex flex-col items-center justify-center h-screen">
+    <h1 className="text-2xl font-bold text-green-400">Payment Successful!</h1>
+    <button 
+      className="mt-4 px-6 py-2 bg-gray-500 text-white font-semibold rounded-lg hover:bg-green-600 transition duration-300"
+      onClick={() => navigate('/')}
+    >
+      Go to Home
+    </button>
+  </div>
+
+    // <div className="flex items-center justify-center h-screen">
+    //    <h1 className="text-2xl font-bold text-green-500">Payment Successful!</h1>
+    //    <button>GO To Home</button>
+    //  </div>
 
 
   )
